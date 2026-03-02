@@ -1,0 +1,31 @@
+
+{
+    "main" : {
+        "sensor data" : {
+            "bulb" : 
+            {
+                "timestamp" : "",
+                "Current" : "",
+                "voltage" : "",
+                "Temp" : ""
+            },
+            "Motor" :  
+            {
+                "timestamp" : "",
+                "Voltage" : "",
+                "Current" : "",
+                "Temp" : "",
+                "Vibration" : ""
+            },
+            "Fan" : {
+                "timestamp" : "",
+                "Voltage" : "",
+                "Current" : "",
+                "Temp" : "",
+                "Vibration" : ""
+             }
+        
+        }
+    }
+}
+

@@ -1,0 +1,7 @@
+{
+    "Alert" : {
+        "Motor" : "True",
+        "Fan" : "False",
+        "Bulb" : "True"
+    }
+}
