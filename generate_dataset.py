@@ -1,48 +1,64 @@
-import pandas as pd
 import random
+import csv
 
-def generate_dataset(samples_per_device=500):
-    data = []
+# Number of rows you want in dataset
+num_samples = 1000
+
+# CSV file name
+filename = "sensors_dataset_training.csv"
+
+# Create CSV file
+with open(filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
     
-    devices = ['Motor', 'Fan', 'Bulb']
+    # Writing Header
+    writer.writerow([
+        "motor_current", "motor_voltage", "motor_temp", "motor_vibration", "motor_fault",
+        "fan_current", "fan_voltage", "fan_temp", "fan_vibration", "fan_fault",
+        "bulb_current", "bulb_voltage", "bulb_temp", "bulb_fault"
+    ])
     
-    for _ in range(samples_per_device):
-        # --- MOTOR CATEGORY ---
-        data.append({
-            'device_type': 'Motor',
-            'voltage_v': round(random.uniform(0.0, 120.0), 2),
-            'current_a': round(random.uniform(0.8, 2.0), 2),
-            'temp_c': round(random.uniform(25.0, 95.0), 2),
-            'vibration_g': round(random.uniform(0.2, 5.0), 2)
-        })
+    for _ in range(num_samples):
         
-        # --- FAN CATEGORY ---
-        data.append({
-            'device_type': 'Fan',
-            'voltage_v': round(random.uniform(0.0, 24.0), 2),
-            'current_a': round(random.uniform(0.0, 1.5), 2),
-            'temp_c': round(random.uniform(20.0, 60.0), 2),
-            'vibration_g': round(random.uniform(0.1, 2.5), 2)
-        })
+        # ---------------- Motor ----------------
+        motor_current = round(random.uniform(0.8, 2.0), 2)
+        motor_voltage = round(random.uniform(0.0, 120.0), 2)
+        motor_temp = round(random.uniform(25.0, 95.0), 2)
+        motor_vibration = round(random.uniform(0.2, 5.0), 2)
         
-        # --- BULB CATEGORY ---
-        data.append({
-            'device_type': 'Bulb',
-            'voltage_v': round(random.uniform(0.0, 12.0), 2),
-            'current_a': round(random.uniform(0.3, 0.6), 2),
-            'temp_c': round(random.uniform(25.0, 120.0), 2),
-            'vibration_g': round(random.uniform(0.0, 0.02), 2) # Near zero for bulbs
-        })
+        motor_fault = 1 if (
+            motor_temp > 85 or
+            motor_vibration > 4.5 or
+            motor_current > 1.8
+        ) else 0
+        
+        # ---------------- Fan ----------------
+        fan_current = round(random.uniform(0.0, 1.5), 2)
+        fan_voltage = round(random.uniform(0.0, 24.0), 2)
+        fan_temp = round(random.uniform(20.0, 60.0), 2)
+        fan_vibration = round(random.uniform(0.1, 2.5), 2)
+        
+        fan_fault = 1 if (
+            fan_temp > 55 or
+            fan_vibration > 2.0 or
+            fan_current > 1.3
+        ) else 0
+        
+        # ---------------- Bulb ----------------
+        bulb_current = round(random.uniform(0.3, 0.6), 2)
+        bulb_voltage = round(random.uniform(0.0, 12.0), 2)
+        bulb_temp = round(random.uniform(25.0, 120.0), 2)
+        
+        bulb_fault = 1 if (
+            bulb_temp > 110 or
+            bulb_current > 0.55
+        ) else 0
+        
+        # Write row
+        writer.writerow([
+            motor_current, motor_voltage, motor_temp, motor_vibration, motor_fault,
+            fan_current, fan_voltage, fan_temp, fan_vibration, fan_fault,
+            bulb_current, bulb_voltage, bulb_temp, bulb_fault
+        ])
 
-    # Convert to DataFrame
-    df = pd.DataFrame(data)
-    
-    # Shuffle the dataset so the ML model doesn't learn based on the order of devices
-    df = df.sample(frac=1).reset_index(drop=True)
-    
-    # Export to CSV
-    df.to_csv('sensors_dataset_training.csv', index=False)
-    print(f"Successfully generated dataset with {len(df)} rows.")
-
-if __name__ == "__main__":
-    generate_dataset()
+print(f"Dataset '{filename}' generated successfully with {num_samples} samples.")
