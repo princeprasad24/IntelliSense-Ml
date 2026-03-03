@@ -5,9 +5,12 @@
             "bulb" : 
             {
                 "timestamp" : "",
-                "Current" : "",
-                "voltage" : "",
-                "Temp" : ""
+                "values" :
+                {
+                    "Current" : "",
+                    "voltage" : "",
+                    "Temp" : ""
+                }
             },
             "Motor" :  
             {

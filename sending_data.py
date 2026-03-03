@@ -3,15 +3,15 @@ from firebase_admin import credentials, db
 import random
 import time
 from datetime import datetime
-
-cred = credentials.Certificate("serviceAccountKey.json")
+import jsonify
+cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json")
 
 firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"
 })
 
 # Reference to appliances node
-appliances_ref = db.reference("appliances")
+appliances_ref = db.reference("dev_1").child("Sensor data")
 
 # Base values
 motor_health = 95
@@ -69,28 +69,39 @@ def generate_appliance_data():
     if bulb_status == "Failure":
         bulb_current = 0.0
 
-    return {
-        "motor": {
-            "timestamp": datetime.now().strftime("%H:%M:%S"),
-            "Current" : motor_current,
-            "voltage" : motor_voltage,
-            "Temp" : motor_temp,
-            "Vibration" : motor_vibration
-        },
-        "fan": {
-            "timestamp": datetime.now().strftime("%H:%M:%S"),
-            "Current" : fan_current,
-            "Voltage" : fan_voltage,
-            "Temp" : fan_temp,
-            "Vibration" : fan_vibration
-        },
-        "bulb": {
-            "timestamp": datetime.now().strftime("%H:%M:%S"),
-            "Current" : bulb_current,
-            "voltage" : bulb_voltage,
-            "Temp" : bulb_temp
-        }
-    }
+    
+    return [   
+            #motor Values
+            {
+                "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "values" : {
+                    "Current" : motor_current,
+                    "voltage" : motor_voltage,
+                    "Temp" : motor_temp,
+                    "Vibration" : motor_vibration
+                }
+            },
+            #Fan Vavlues
+            {
+                "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "values" : {
+                    "Current" : fan_current,
+                    "Voltage" : fan_voltage,
+                    "Temp" : fan_temp,
+                    "Vibration" : fan_vibration
+                }
+            },
+            {
+                #Bulb Values
+                "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "values" : {
+                    "Current" : bulb_current,
+                    "voltage" : bulb_voltage,
+                    "Temp" : bulb_temp
+                }
+            }
+        ]
+    
 
 
 print("🚀 Appliance Simulator Started...")
@@ -99,8 +110,14 @@ while True:
     appliance_data = generate_appliance_data()
 
     # Use set() instead of push() to maintain fixed structure
-    appliances_ref.set(appliance_data)
+    # appliances_ref.set((appliance_data))
+
+    #Send Values
+    appliances_ref.child("motor").push(appliance_data[0])
+    appliances_ref.child("fan").push(appliance_data[1])
+    appliances_ref.child("bulb").push(appliance_data[2])
+
 
     print("📡 Appliances Updated:", appliance_data)
 
-    time.sleep(2)
+    time.sleep(5)
