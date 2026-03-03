@@ -15,62 +15,80 @@ appliances_ref = db.reference("appliances")
 
 # Base values
 motor_health = 95
-pump_health = 90
+fan_health = 90
 bulb_health = 100
 
 def generate_appliance_data():
-    global motor_health, pump_health, bulb_health
+    global motor_health, fan_health, bulb_health
 
     # Simulate current fluctuations
     motor_current = round(random.uniform(0.8, 2.0), 2)
-    pump_current = round(random.uniform(0.0, 1.5), 2)
+    fan_current = round(random.uniform(0.0, 1.5), 2)
     bulb_current = round(random.uniform(0.3, 0.6), 2)
+
+
+    #Simulating Voltage fluctuations
+    motor_voltage = round(random.uniform(0.0,120.0),2)
+    fan_voltage = round(random.uniform(0.0,24.0),2)
+    bulb_voltage = round(random.uniform(0.0,12.0),2)
+
+    #Simulating Tempearture Fluctuations
+    motor_temp = round(random.uniform(25.0,95.0),2)
+    fan_temp = round(random.uniform(20.0,60.0),2)
+    bulb_temp = round(random.uniform(25.0,120.0),2)
+
+
+    #Simulating Vibration Fluctuations
+    motor_vibration = round(random.uniform(0.2,5.0),2)
+    fan_vibration = round(random.uniform(0.1,2.5),2)
 
     # Random health degradation
     motor_health -= random.uniform(0, 0.5)
-    pump_health -= random.uniform(0, 1.0)
+    fan_health -= random.uniform(0, 1.0)
     bulb_health -= random.uniform(0, 0.2)
 
     # Random failure event (5% chance)
     if random.random() < 0.05:
-        pump_health = random.uniform(0, 20)
+        fan_health = random.uniform(0, 20)
 
     # Clamp health between 0 and 100
     motor_health = max(0, min(100, motor_health))
-    pump_health = max(0, min(100, pump_health))
+    fan_health = max(0, min(100, fan_health))
     bulb_health = max(0, min(100, bulb_health))
 
     # Determine status
     motor_status = "Failure" if motor_health < 20 else "Active"
-    pump_status = "Failure" if pump_health < 20 else "Active"
+    fan_status = "Failure" if fan_health < 20 else "Active"
     bulb_status = "Failure" if bulb_health < 20 else "Active"
 
     # If failure → current becomes 0
     if motor_status == "Failure":
         motor_current = 0.0
-    if pump_status == "Failure":
-        pump_current = 0.0
+    if fan_status == "Failure":
+        fan_current = 0.0
     if bulb_status == "Failure":
         bulb_current = 0.0
 
     return {
-        "dc_motor": {
-            "status": motor_status,
-            "health": int(motor_health),
-            "current": motor_current,
-            "timestamp": datetime.now().strftime("%H:%M:%S")
+        "motor": {
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "Current" : motor_current,
+            "voltage" : motor_voltage,
+            "Temp" : motor_temp,
+            "Vibration" : motor_vibration
         },
-        "dc_pump": {
-            "status": pump_status,
-            "health": int(pump_health),
-            "current": pump_current,
-            "timestamp": datetime.now().strftime("%H:%M:%S")
+        "fan": {
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "Current" : fan_current,
+            "Voltage" : fan_voltage,
+            "Temp" : fan_temp,
+            "Vibration" : fan_vibration
         },
         "bulb": {
-            "status": bulb_status,
-            "health": int(bulb_health),
-            "current": bulb_current,
-            "timestamp": datetime.now().strftime("%H:%M:%S")
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "Current" : bulb_current,
+            "voltage" : bulb_voltage,
+            "Temp" : bulb_temp
         }
     }
 
