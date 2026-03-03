@@ -1,41 +1,48 @@
 import pandas as pd
-import numpy as np
+import random
 
-def generate_motor_data(samples=500):
-    np.random.seed(42)
+def generate_dataset(samples_per_device=500):
+    data = []
     
+    devices = ['Motor', 'Fan', 'Bulb']
     
-    normal_samples = int(samples * 0.7)
-    df_normal = pd.DataFrame({
-        'current': np.random.normal(2.5, 0.2, normal_samples),      
-        'vibration': np.random.normal(0.05, 0.01, normal_samples),  
-        'temp': np.random.normal(40, 2, normal_samples),            
-        'target': 0  
-    })
+    for _ in range(samples_per_device):
+        # --- MOTOR CATEGORY ---
+        data.append({
+            'device_type': 'Motor',
+            'voltage_v': round(random.uniform(0.0, 120.0), 2),
+            'current_a': round(random.uniform(0.8, 2.0), 2),
+            'temp_c': round(random.uniform(25.0, 95.0), 2),
+            'vibration_g': round(random.uniform(0.2, 5.0), 2)
+        })
+        
+        # --- FAN CATEGORY ---
+        data.append({
+            'device_type': 'Fan',
+            'voltage_v': round(random.uniform(0.0, 24.0), 2),
+            'current_a': round(random.uniform(0.0, 1.5), 2),
+            'temp_c': round(random.uniform(20.0, 60.0), 2),
+            'vibration_g': round(random.uniform(0.1, 2.5), 2)
+        })
+        
+        # --- BULB CATEGORY ---
+        data.append({
+            'device_type': 'Bulb',
+            'voltage_v': round(random.uniform(0.0, 12.0), 2),
+            'current_a': round(random.uniform(0.3, 0.6), 2),
+            'temp_c': round(random.uniform(25.0, 120.0), 2),
+            'vibration_g': round(random.uniform(0.0, 0.02), 2) # Near zero for bulbs
+        })
 
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
     
+    # Shuffle the dataset so the ML model doesn't learn based on the order of devices
+    df = df.sample(frac=1).reset_index(drop=True)
     
-    fail_vib_samples = int(samples * 0.15)
-    df_vib = pd.DataFrame({
-        'current': np.random.normal(2.8, 0.3, fail_vib_samples), 
-        'vibration': np.random.normal(0.8, 0.15, fail_vib_samples), 
-        'temp': np.random.normal(55, 5, fail_vib_samples),          
-        'target': 1  
-    })
+    # Export to CSV
+    df.to_csv('sensors_dataset_training.csv', index=False)
+    print(f"Successfully generated dataset with {len(df)} rows.")
 
-    
-    
-    fail_load_samples = int(samples * 0.15)
-    df_load = pd.DataFrame({
-        'current': np.random.normal(9.5, 1.0, fail_load_samples),   
-        'vibration': np.random.normal(0.1, 0.05, fail_load_samples),
-        'temp': np.random.normal(85, 8, fail_load_samples),         
-        'target': 1  
-    })
-
-    
-    dataset = pd.concat([df_normal, df_vib, df_load]).sample(frac=1).reset_index(drop=True)
-    dataset.to_csv('sensor_training_data.csv', index=False)
-    print("Dataset generated: sensor_training_data.csv")
-
-generate_motor_data()
+if __name__ == "__main__":
+    generate_dataset()

@@ -66,9 +66,10 @@ import time
 # -------------------------
 # 1. Firebase Setup
 # -------------------------
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    # 'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
+    'databaseURL' : "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/dev_1" #MY URL
 })
 
 sensor_ref = db.reference('sensor_data')
