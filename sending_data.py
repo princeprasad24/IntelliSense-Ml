@@ -3,7 +3,6 @@ from firebase_admin import credentials, db
 import random
 import time
 from datetime import datetime
-import jsonify
 cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json")
 
 firebase_admin.initialize_app(cred, {
