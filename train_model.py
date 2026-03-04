@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 #LOADINGF THE CSV FILE
@@ -35,10 +35,10 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 
 #Saving the model
-joblib.dump(model, 'random_forest_model_sensor_data.pkl')
+# joblib.dump(model, 'random_forest_model_sensor_data.pkl')
 
-# importance = model.feature_importances_
+importance = model.feature_importances_
 
-# plt.bar(X.columns, importance)
-# plt.title("Feature Importance")
-# plt.show()
+plt.bar(X.columns, importance)
+plt.title("Feature Importance")
+plt.show()
