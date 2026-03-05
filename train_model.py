@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
+import pickle
 import matplotlib.pyplot as plt
 
 
@@ -53,8 +54,13 @@ bulb_model = creating_model(bulb_x,bulb_y)
 
 
 #Saving models into a file
-for i in ["motor_model","fan_model","bulb_model"]:
-    joblib.dump(i,f"rfm_{i}.pkl")
+joblib.dump(motor_model,"rfm_motor_model.pkl")
+joblib.dump(fan_model,"rfm_fan_model.pkl")
+joblib.dump(bulb_model,"rfm_bulb_model.pkl")
+# for i in [motor_model,fan_model,bulb_model]:
+#     file_name = f"rfm_{i}.pkl"
+#     joblib.dump(i,filename=file_name)
+    # pickle.dump(i,f"rfm_{i}.pkl")
 
 
 #Saving the model

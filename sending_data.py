@@ -24,7 +24,7 @@ def generate_appliance_data():
     global motor_health, fan_health, bulb_health
 
     # Simulate current fluctuations
-    motor_current = round(random.uniform(0.8, 2.0), 2)
+    motor_current = round(random.uniform(1.9, 2.0), 2)
     fan_current = round(random.uniform(0.0, 1.5), 2)
     bulb_current = round(random.uniform(0.3, 0.6), 2)
 
@@ -76,9 +76,10 @@ def generate_appliance_data():
             #motor Values
             {
                 "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "device" : "motor",
                 "values" : {
                     "Current" : motor_current,
-                    "voltage" : motor_voltage,
+                    "Voltage" : motor_voltage,
                     "Temp" : motor_temp,
                     "Vibration" : motor_vibration
                 }
@@ -86,6 +87,7 @@ def generate_appliance_data():
             #Fan Vavlues
             {
                 "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "device" : "fan",
                 "values" : {
                     "Current" : fan_current,
                     "Voltage" : fan_voltage,
@@ -96,9 +98,10 @@ def generate_appliance_data():
             {
                 #Bulb Values
                 "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "device" : "bulb",
                 "values" : {
                     "Current" : bulb_current,
-                    "voltage" : bulb_voltage,
+                    "Voltage" : bulb_voltage,
                     "Temp" : bulb_temp
                 }
             }

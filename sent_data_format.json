@@ -5,6 +5,7 @@
             "bulb" : 
             {
                 "timestamp" : "",
+                "device type" : "",
                 "values" :
                 {
                     "Current" : "",
@@ -15,17 +16,23 @@
             "Motor" :  
             {
                 "timestamp" : "",
-                "Voltage" : "",
-                "Current" : "",
-                "Temp" : "",
-                "Vibration" : ""
+                "device type" : "",
+                "values" : {
+                    "Voltage" : "",
+                    "Current" : "",
+                    "Temp" : "",
+                    "Vibration" : ""
+                }
             },
             "Fan" : {
                 "timestamp" : "",
-                "Voltage" : "",
-                "Current" : "",
-                "Temp" : "",
-                "Vibration" : ""
+                "device type" : "",
+                "values" : {
+                    "Voltage" : "",
+                    "Current" : "",
+                    "Temp" : "",
+                    "Vibration" : ""
+                }
              }
         
         }

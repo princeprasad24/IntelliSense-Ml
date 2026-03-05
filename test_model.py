@@ -4,7 +4,10 @@ from pandas import DataFrame as pd
 import random
 import time
 
-model = load("random_forest_model_sensor_data.pkl")
+device = "motor"
+# model = load("random_forest_model_sensor_data.pkl")
+model = load(f"rfm_{device}_model.pkl")
+
 
 
 for i in range(10):
@@ -29,15 +32,12 @@ for i in range(10):
     motor_vibration = round(random.uniform(0.2,5.0),2)
     fan_vibration = round(random.uniform(0.1,2.5),2)
 
+    print(f"this is the data :  \n \
+        motor Current: {motor_current} , Voltage : {motor_voltage} \n \
+        temp : {motor_temp} vibration : {motor_vibration} ")
 
-    print("this is the data : ",
-          "\n motor Current: ",motor_current,
-          "   motor Voltage : ",motor_voltage,
-          "\n motor_temp : ",motor_temp,
-          "   motor vibration : ",motor_vibration)
     test_data = pd([[motor_current,motor_voltage,motor_temp,motor_vibration]],
                             columns=['motor_current','motor_voltage','motor_temp','motor_vibration'])
-
 
     predict = model.predict(test_data)[0]
 

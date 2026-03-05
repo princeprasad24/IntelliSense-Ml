@@ -1,5 +1,5 @@
 from pandas import DataFrame as df
-from joblib import load
+from joblib import load,dump
 import time
 from firebase_admin import credentials,db,initialize_app
 
@@ -12,10 +12,78 @@ initialize_app(cred,{
 
 #Reference to my firebase database
 sensor_data_ref = db.reference('dev_1')
+alerts_ref = db.reference('alerts')
+
+global ct
+ct = 0
 
 #Loading the model into a object
-model = load('random_forest_model_sensor_data.pkl')
+def predicttion(device_type,current,voltage,temp,vibration):
 
+
+    #Loading the Model
+    try:
+        model = load(f'rfm_{device_type}_model.pkl')
+    except FileNotFoundError:
+        return {'error': f'Model for {device_type} not found'}
+    
+    
+    test_data = df([[current, voltage, temp, vibration]],
+                    columns=[f'{device_type}_current', f'{device_type}_voltage', f'{device_type}_temp', f'{device_type}_vibration'])
+    
+
+
+    
+    # Make prediction
+    prediction = model.predict(test_data)[0]
+    fault_probability = model.predict_proba(test_data)[0][1]  # Probability of fault
+
+    print(f"THE prediciton for this  is {prediction}")
+
+
+    def send_alert(device):
+        # print(f"Anomaly detected! Device: {device} Vib: {vibration}g, Temp: {temp}°C, Current: {current}A , Voltage: {voltage}")
+        data = {
+            "device" : device_type,
+            "Current" : current,
+            "Voltage" : voltage,
+            "Temp" : temp,
+            "prediction" : prediction
+        }
+
+        print(f"Anamoly Detected in {device}")
+        alerts_ref.push(data)
+        
+    if prediction == 1:
+        send_alert(device_type)
+
+    # return 0 or 1
+
+def printing(x):   
+
+    try:
+        device_type = x.data.get("device")
+        values = x.data.get("values")
+        current = values.get("Current")
+        Voltage = values.get("Voltage")
+        Temp = values.get("Temp")
+        Vibr = values.get("Vibration")
+        print(f'device type: {device_type} current: {current}  voltage: {Voltage} Temperature: {Temp}  Vibration: {Vibr}')
+        # print(f"count : {ct}   type: {x.data.get("device")}  {x.data.get('values')}")
+        # if not current or Voltage or Temp or Vibr:
+        predicttion(device_type=device_type,current=current,voltage=Voltage,temp=Temp,vibration=Vibr)
+
+
+
+    except:
+        tkk = 0
+
+
+sensor_data_ref.child("Sensor data").child("motor").listen(printing)
+sensor_data_ref.child("Sensor data").child("fan").listen(printing)
+sensor_data_ref.child("Sensor data").child("bulb").listen(printing)
+
+# print(devices_data)
 
 
 
