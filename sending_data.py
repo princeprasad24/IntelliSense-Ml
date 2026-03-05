@@ -14,6 +14,7 @@ firebase_admin.initialize_app(cred, {
 
 # Reference to appliances node
 appliances_ref = db.reference("dev_1").child("Sensor data")
+alerts_red = db.reference("alerts")
 
 # Base values
 motor_health = 95
@@ -121,6 +122,11 @@ while True:
     appliances_ref.child("motor").push(appliance_data[0])
     appliances_ref.child("fan").push(appliance_data[1])
     appliances_ref.child("bulb").push(appliance_data[2])
+
+    # alerts_red.child("motor").push("0")
+    # alerts_red.child("fan").push("0")
+    # alerts_red.child("bulb").push("0")
+    
 
 
     print("📡 Appliances Updated:", appliance_data)
