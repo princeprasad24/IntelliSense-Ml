@@ -1,7 +1,6 @@
 from pandas import DataFrame as df
 from joblib import load,dump
 import time
-import jsonify
 from firebase_admin import credentials,db,initialize_app
 
 
@@ -15,13 +14,22 @@ initialize_app(cred,{
 })
 
 #Reference to my firebase database
-sensor_data_ref = db.reference('dev_1')
+sensor_data_ref = db.reference('Sensor data')
 alerts_ref = db.reference('alerts')
+health_ref = db.reference('remaining_life')
+
+
+#Histroty data for time series
+device_history = {
+        "motor": [],
+        "fan": [],
+        "bulb": []
+}
 
 
 
 #Loading the model into a object
-def predicttion(device_type,current,voltage,temp,vibration):
+def rfc_predicttion(device_type,current,voltage,temp,vibration):
 
 
     #Loading the Model
@@ -31,9 +39,13 @@ def predicttion(device_type,current,voltage,temp,vibration):
         return {'error': f'Model for {device_type} not found'}
     
     #Creating Test data
-    test_data = df([[current, voltage, temp, vibration]],
-                    columns=[f'{device_type}_current', f'{device_type}_voltage', f'{device_type}_temp', f'{device_type}_vibration'])
-        
+    if vibration is not None:
+        test_data = df([[current, voltage, temp, vibration]],
+                        columns=[f'{device_type}_current', f'{device_type}_voltage', f'{device_type}_temp', f'{device_type}_vibration'])
+    else:
+        test_data = df([[current, voltage, temp]],
+                        columns=[f'{device_type}_current', f'{device_type}_voltage', f'{device_type}_temp'])
+
     # Make prediction
     prediction = model.predict(test_data)[0]
     # fault_probability = model.predict_proba(test_data)[0][1]  # Probability of fault
@@ -59,6 +71,83 @@ def predicttion(device_type,current,voltage,temp,vibration):
     if prediction == int(1):
         send_alert(device_type,current,voltage,temp,prediction)
 
+#Time Series analysis
+def ts_prediction(device_type,current,voltage,temp,vibration):
+
+    #Storing previous data for time series
+    try:
+        model = load(f"ts_{device_type}_model.pkl")
+    except FileNotFoundError:
+        return {"error": f"Model for {device_type} not found"}
+    
+
+    history = device_history[device_type]
+
+    history.append(temp)
+
+    if len(history) < 3:
+        print("Not enough data yet")
+        return 0,100
+
+    temp_lag1 = history[-2]
+    temp_lag2 = history[-3]
+
+    # create input dataframe
+    if vibration is not None:
+        test_data = df(
+            [[temp_lag1,temp_lag2,vibration]],
+            columns=[f"{device_type}_temp_lag1",
+                    f"{device_type}_temp_lag2",
+                    f"{device_type}_vibration_lag1"]
+        )
+    else:
+        test_data = df(
+            [[temp_lag1,temp_lag2]],
+            columns=[f"{device_type}_temp_lag1",
+                    f"{device_type}_temp_lag2"]
+        )
+
+    max_history_size = 10
+    device_history[device_type].append(temp)
+
+    if len(device_history[device_type]) > max_history_size:
+        device_history[device_type].pop(0)
+        
+    def send_health(anamoly,health,device):
+        data = {
+            "device" : device,
+            "health" : health,
+            "anamoly" : anamoly
+        }
+        health_ref.child(device).push(data)
+
+    #Calculte health of the device
+    def calculate_health(deviation):
+        if deviation < 3:
+            return 98
+        elif deviation < 6:
+            return 90
+        elif deviation < 10:
+            return 75
+        elif deviation < 15:
+            return 55
+        else:
+            return 25
+
+    predicted_temp = model.predict(test_data)[0]
+
+    deviation = abs(temp - predicted_temp)
+
+    health = calculate_health(deviation=deviation)
+    anomaly = 1 if deviation > 10 else 0
+
+    send_health(anamoly=anomaly,health=health,device=device_type)
+    # print(f"Predicted Temp: {predicted_temp}")
+    # print(f"Actual Temp: {temp}")
+    # print(f"Deviation: {deviation}")
+
+    
+
 def printing(x):   
 
     try:
@@ -69,15 +158,16 @@ def printing(x):
         Temp = values.get("Temp")
         Vibr = values.get("Vibration")
         print(f'device type: {device_type} current: {current}  voltage: {Voltage} Temperature: {Temp}  Vibration: {Vibr}')
-        predicttion(device_type=device_type,current=current,voltage=Voltage,temp=Temp,vibration=Vibr)
+        rfc_predicttion(device_type=device_type,current=current,voltage=Voltage,temp=Temp,vibration=Vibr) #prediction for random forest
+        ts_prediction(device_type=device_type,current=current,voltage=Voltage,temp=Temp,vibration=Vibr) #prediciton for time series
 
     except:
         tkk = 0
 
 
-sensor_data_ref.child("Sensor data").child("motor").listen(printing)
-sensor_data_ref.child("Sensor data").child("fan").listen(printing)
-sensor_data_ref.child("Sensor data").child("bulb").listen(printing)
+sensor_data_ref.child("motor").listen(printing)
+sensor_data_ref.child("fan").listen(printing)
+sensor_data_ref.child("bulb").listen(printing)
 
 
 

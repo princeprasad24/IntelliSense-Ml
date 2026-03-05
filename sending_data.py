@@ -13,7 +13,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 # Reference to appliances node
-appliances_ref = db.reference("dev_1").child("Sensor data")
+s_ref = db.reference("Sensor data")
 alerts_red = db.reference("alerts")
 
 # Base values
@@ -108,27 +108,22 @@ def generate_appliance_data():
             }
         ]
     
-
-
-print("🚀 Appliance Simulator Started...")
+print("Getting Sensor Data")
 
 while True:
-    appliance_data = generate_appliance_data()
+    s_data = generate_appliance_data()
 
     # Use set() instead of push() to maintain fixed structure
-    # appliances_ref.set((appliance_data))
+    # s.set((appliance_data))
 
     #Send Values
-    appliances_ref.child("motor").push(appliance_data[0])
-    appliances_ref.child("fan").push(appliance_data[1])
-    appliances_ref.child("bulb").push(appliance_data[2])
+    s_ref.child("motor").push(s_data[0])
+    s_ref.child("fan").push(s_data[1])
+    s_ref.child("bulb").push(s_data[2])
 
-    # alerts_red.child("motor").push("0")
-    # alerts_red.child("fan").push("0")
-    # alerts_red.child("bulb").push("0")
     
 
 
-    print("📡 Appliances Updated:", appliance_data)
+    print("Sensor Data Updated:", s_data)
 
     time.sleep(5)

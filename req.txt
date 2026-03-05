@@ -3,3 +3,4 @@ numpy
 firebase_admin
 joblib
 scikit-learn
+csv
