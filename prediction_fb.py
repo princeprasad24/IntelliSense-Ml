@@ -107,12 +107,14 @@ def ts_prediction(device_type,current,voltage,temp,vibration):
                     f"{device_type}_temp_lag2"]
         )
 
+    #Delete previous data
     max_history_size = 10
     device_history[device_type].append(temp)
 
     if len(device_history[device_type]) > max_history_size:
         device_history[device_type].pop(0)
-        
+    
+
     def send_health(anamoly,health,device):
         data = {
             "device" : device,
