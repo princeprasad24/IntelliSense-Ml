@@ -61,38 +61,39 @@
 
 # train_timeseries_model.py
 
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from joblib import dump
+# import pandas as pd
+# from sklearn.linear_model import LinearRegression
+# from joblib import dump
 
-df = pd.read_csv("timeseries_device_data.csv")
+# df = pd.read_csv("timeseries_device_data.csv")
 
-window = 5
+# window = 5
 
-devices = ["motor","fan","bulb"]
+# devices = ["motor","fan","bulb"]
 
-for device in devices:
+# for device in devices:
 
-    temp_col = f"{device}_temp"
-    vib_col = f"{device}_vibration" if device != "bulb" else None
+#     temp_col = f"{device}_temp"
+#     vib_col = f"{device}_vibration" if device != "bulb" else None
 
-    df[f"{temp_col}_lag1"] = df[temp_col].shift(1)
-    df[f"{temp_col}_lag2"] = df[temp_col].shift(2)
+#     df[f"{temp_col}_lag1"] = df[temp_col].shift(1)
+#     df[f"{temp_col}_lag2"] = df[temp_col].shift(2)
 
-    features = [f"{temp_col}_lag1",f"{temp_col}_lag2"]
+#     features = [f"{temp_col}_lag1",f"{temp_col}_lag2"]
 
-    if vib_col:
-        df[f"{vib_col}_lag1"] = df[vib_col].shift(1)
-        features.append(f"{vib_col}_lag1")
+#     if vib_col:
+#         df[f"{vib_col}_lag1"] = df[vib_col].shift(1)
+#         features.append(f"{vib_col}_lag1")
 
-    df_model = df.dropna()
+#     df_model = df.dropna()
 
-    X = df_model[features]
-    y = df_model[temp_col]
+#     X = df_model[features]
+#     y = df_model[temp_col]
 
-    model = LinearRegression()
-    model.fit(X,y)
+#     model = LinearRegression()
+#     model.fit(X,y)
 
-    dump(model,f"ts_{device}_model.pkl")
+#     dump(model,f"ts_{device}_model.pkl")
 
-    print(f"{device} model saved")
+#     print(f"{device} model saved")
+

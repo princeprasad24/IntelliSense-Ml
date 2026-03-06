@@ -4,12 +4,12 @@ import random
 import time
 from datetime import datetime
 
-cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #GANESH DB
-# cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD DB
+# cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #GANESH DB
+cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD DB
 
 firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"  #GANESH DB
-    # "databaseURL" : "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app//" #PRASAD DB
+    # "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"  #GANESH DB
+    "databaseURL" : "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app//" #PRASAD DB
 })
 
 # Reference to appliances node

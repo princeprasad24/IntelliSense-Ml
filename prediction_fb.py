@@ -125,16 +125,9 @@ def ts_prediction(device_type,current,voltage,temp,vibration):
 
     #Calculte health of the device
     def calculate_health(deviation):
-        if deviation < 3:
-            return 98
-        elif deviation < 6:
-            return 90
-        elif deviation < 10:
-            return 75
-        elif deviation < 15:
-            return 55
-        else:
-            return 25
+        health = max(0, 100 - deviation*1000)
+
+        return health
 
     predicted_temp = model.predict(test_data)[0]
 
