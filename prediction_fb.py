@@ -5,12 +5,12 @@ from firebase_admin import credentials,db,initialize_app
 
 
 #Firebase Login and initailisation
-cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #Ganesh key
-# cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD Key
+# cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #Ganesh key
+cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD Key
 
 initialize_app(cred,{
-    # 'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
-    'databaseURL' : 'https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/' #Ganesh URL
+    'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
+    # 'databaseURL' : 'https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/' #Ganesh URL
 })
 
 #Reference to my firebase database
@@ -89,22 +89,22 @@ def ts_prediction(device_type,current,voltage,temp,vibration):
         print("Not enough data yet")
         return 0,100
 
-    temp_lag1 = history[-2]
-    temp_lag2 = history[-3]
+    current_lag1 = history[-2]
+    current_lag2 = history[-3]
 
     # create input dataframe
-    if vibration is not None:
+    if current is not None:
         test_data = df(
-            [[temp_lag1,temp_lag2,vibration]],
-            columns=[f"{device_type}_temp_lag1",
-                    f"{device_type}_temp_lag2",
+            [[current_lag1,current_lag2,vibration]],
+            columns=[f"{device_type}_current_lag1",
+                    f"{device_type}_current_lag2",
                     f"{device_type}_vibration_lag1"]
         )
     else:
         test_data = df(
-            [[temp_lag1,temp_lag2]],
-            columns=[f"{device_type}_temp_lag1",
-                    f"{device_type}_temp_lag2"]
+            [[current_lag1,current_lag2]],
+            columns=[f"{device_type}_current_lag1",
+                    f"{device_type}_current_lag2"]
         )
 
     #Delete previous data
@@ -121,6 +121,7 @@ def ts_prediction(device_type,current,voltage,temp,vibration):
             "health" : health,
             "anamoly" : anamoly
         }
+        print(f"Health data : {data}")
         health_ref.child(device).push(data)
 
     #Calculte health of the device
