@@ -45,16 +45,16 @@ from joblib import dump
 df = pd.read_csv("timeseries_sensor_dataset.csv")
 
 # Create lag features
-df["temp_lag1"] = df["temperature"].shift(1)
-df["temp_lag2"] = df["temperature"].shift(2)
+df["voltage_lag1"] = df["voltage"].shift(1)
+df["voltage_lag2"] = df["voltage"].shift(2)
 
 df = df.dropna()
 
 # Features
-X = df[["temp_lag1","temp_lag2","vibration"]]
+X = df[["voltage_lag1","voltage_lag2","vibration"]]
 
 # Target
-y = df["temperature"]
+y = df["voltage"]
 
 # Train model
 model = LinearRegression()
