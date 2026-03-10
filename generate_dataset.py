@@ -107,140 +107,118 @@
 
 #Actual Sensor Data generation
 
-
+#RFC
 # import pandas as pd
 # import random
-# from datetime import datetime, timedelta
 
 # rows = []
-# time = datetime.now()
 
-# motor_temp = 40
-# fan_temp = 30
-# bulb_temp = 35
-# rows = []
+# samples = 5000
 
-# time = datetime.now()
+# for i in range(samples):
 
-# for i in range(5000):
+#     state = random.choice(["off","normal","fault"])
 
-#     time += timedelta(seconds=5)
+#     if state == "off":
 
-#     # Generate sensor values
-#     current = round(random.uniform(0,3),2)
-#     voltage = round(random.uniform(5,25),2)
-#     temp = round(random.uniform(-127,127),2)
+#         current = round(random.uniform(-14,-13),2)
+#         voltage = 0
+#         temp = round(random.uniform(30,35),2)
+#         vibration = 0
+#         label = 0
 
-#     # vibration mostly 0 but sometimes 1
-#     vibration = random.choices([0,1],[0.9,0.1])[0]
+#     elif state == "normal":
 
-#     # Fault detection logic
-#     if (
-#         current < 0.8 or current > 1.3 or
-#         voltage < 7 or voltage > 14 or
-#         temp < 25 or temp > 40 or
-#         vibration == 1
-#     ):
-#         fault = 1
-#     else:
-#         fault = 0
+#         current = round(random.uniform(-13.8,-13.2),2)
+#         voltage = round(random.uniform(9,12),2)
+#         temp = round(random.uniform(30,40),2)
+#         vibration = 0
+#         label = 1
 
-#     rows.append([
-#         time,
-#         current,
-#         voltage,
-#         temp,
-#         vibration,
-#         fault
-#     ])
+#     else: # fault
+
+#         current = round(random.uniform(-13.3,-12.5),2)
+#         voltage = round(random.uniform(13,18),2)
+#         temp = round(random.uniform(30,50),2)
+#         vibration = random.choice([0,1])
+#         label = 2
+
+#     rows.append([current,voltage,temp,vibration,label])
 
 
-# df = pd.DataFrame(rows, columns=[
-#     "timestamp",
+# df = pd.DataFrame(rows,columns=[
 #     "current",
 #     "voltage",
 #     "temperature",
 #     "vibration",
-#     "fault"
+#     "label"
 # ])
 
-# df.to_csv("sensors_dataset_training.csv",index=False)
+# df.to_csv("rfc_sensor_dataset.csv",index=False)
 
-# print("Dataset created")
-
+# print("RFC Dataset Created")
 
 #Time serires Actual Data
 
-
 import pandas as pd
 import random
-from datetime import datetime, timedelta
+from datetime import datetime,timedelta
 
 rows = []
 
-samples = 5000
-timestamp = datetime.now()
+time = datetime.now()
 
-# Initial values (normal operating)
-current = 1.0
-voltage = 10.0
-temp = 30.0
+samples = 6000
 
 for i in range(samples):
 
-    timestamp += timedelta(seconds=5)
+    state = random.choice(["off","normal","fault"])
 
-    # gradual sensor drift
-    current += random.uniform(-0.05,0.05)
-    voltage += random.uniform(-0.2,0.2)
-    temp += random.uniform(-0.3,0.3)
+    if state == "off":
 
-    # clamp values to sensor range
-    current = max(0,min(3,current))
-    voltage = max(5,min(25,voltage))
-    temp = max(-127,min(127,temp))
+        current = round(random.uniform(-14,-13),2)
+        voltage = 0
+        temp = 32
+        vibration = 0
+        label = 0
 
-    # vibration event probability
-    vibration = 1 if random.random() < 0.05 else 0
+    elif state == "normal":
 
-    # simulate fault spikes occasionally
-    if random.random() < 0.03:
-        temp += random.uniform(10,25)
+        current = round(random.uniform(-13.7,-13.3),2)
+        voltage = round(random.uniform(9,12),2)
+        temp = round(random.uniform(30,40),2)
+        vibration = 0
+        label = 1
 
-    if random.random() < 0.03:
-        current += random.uniform(0.5,1.5)
+    else:
 
-    # fault detection
-    fault = 0
-
-    if (
-        current < 0.8 or current > 1.3 or
-        voltage < 7 or voltage > 14 or
-        temp < 25 or temp > 40 or
-        vibration == 1
-    ):
-        fault = 1
+        current = round(random.uniform(-13.3,-12.7),2)
+        voltage = round(random.uniform(13,18),2)
+        temp = round(random.uniform(35,55),2)
+        vibration = 1
+        label = 2
 
     rows.append([
-        timestamp,
-        round(current,2),
-        round(voltage,2),
-        round(temp,2),
+        time,
+        current,
+        voltage,
+        temp,
         vibration,
-        fault
+        label
     ])
 
-columns = [
-"timestamp",
-"current",
-"voltage",
-"temperature",
-"vibration",
-"fault"
-]
+    time = time + timedelta(seconds=5)
 
-df = pd.DataFrame(rows,columns=columns)
 
-df.to_csv("timeseries_sensor_dataset.csv",index=False)
+df = pd.DataFrame(rows,columns=[
+    "timestamp",
+    "current",
+    "voltage",
+    "temperature",
+    "vibration",
+    "label"
+])
 
-print("Time series dataset created")
+df.to_csv("ts_sensor_dataset.csv",index=False)
+
+print("Time Series Dataset Created")

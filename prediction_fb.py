@@ -2,6 +2,7 @@ from pandas import DataFrame as df
 from joblib import load,dump
 import time
 from firebase_admin import credentials,db,initialize_app
+import random
 
 
 #Firebase Login and initailisation
@@ -26,6 +27,14 @@ device_history = {
         "bulb": []
 }
 
+def measure_current(c,v):
+    
+        if c <= 0 and v >= 10:
+             return 1
+        elif c <= 0 :
+            return 0
+        else: 
+            return 0
 
 
 #Loading the model into a object
@@ -34,17 +43,17 @@ def rfc_predicttion(device_type,current,voltage,temp,vibration):
 
     #Loading the Model
     try:
-        model = load(f'rfm_{device_type}_model.pkl')
+        model = load(f'rfc_model.pkl')
     except FileNotFoundError:
         return {'error': f'Model for {device_type} not found'}
     
     #Creating Test data
     if vibration is not None:
         test_data = df([[current, voltage, temp, vibration]],
-                        columns=[f'{device_type}_current', f'{device_type}_voltage', f'{device_type}_temp', f'{device_type}_vibration'])
+                        columns=['current', 'voltage', 'temperature', 'vibration'])
     else:
         test_data = df([[current, voltage, temp]],
-                        columns=[f'{device_type}_current', f'{device_type}_voltage', f'{device_type}_temp'])
+                        columns=['current', 'voltage', 'temp'])
 
     # Make prediction
     prediction = model.predict(test_data)[0]
@@ -68,7 +77,7 @@ def rfc_predicttion(device_type,current,voltage,temp,vibration):
         alerts_ref.child(device_type).push(data)
 
 
-    if prediction == int(1):
+    if prediction == int(2):
         send_alert(device_type,current,voltage,temp,prediction)
 
 #Time Series analysis
@@ -76,7 +85,7 @@ def ts_prediction(device_type,current,voltage,temp,vibration):
 
     #Storing previous data for time series
     try:
-        model = load(f"ts_{device_type}_model.pkl")
+        model = load(f"ts_model.pkl")
     except FileNotFoundError:
         return {"error": f"Model for {device_type} not found"}
     
@@ -96,9 +105,9 @@ def ts_prediction(device_type,current,voltage,temp,vibration):
     if current is not None:
         test_data = df(
             [[current_lag1,current_lag2,vibration]],
-            columns=[f"{device_type}_current_lag1",
-                    f"{device_type}_current_lag2",
-                    f"{device_type}_vibration_lag1"]
+            columns=["current_lag1",
+                    "current_lag2",
+                    "vibration_lag1"]
         )
     else:
         test_data = df(
@@ -153,6 +162,9 @@ def printing(x):
         Voltage = values.get("Voltage")
         Temp = values.get("Temp")
         Vibr = values.get("Vibration")
+
+        # current = measure_current()
+        
         print(f'device type: {device_type} current: {current}  voltage: {Voltage} Temperature: {Temp}  Vibration: {Vibr}')
         rfc_predicttion(device_type=device_type,current=current,voltage=Voltage,temp=Temp,vibration=Vibr) #prediction for random forest
         ts_prediction(device_type=device_type,current=current,voltage=Voltage,temp=Temp,vibration=Vibr) #prediciton for time series
