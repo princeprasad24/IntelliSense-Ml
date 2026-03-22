@@ -119,7 +119,7 @@ def generate_appliance_data():
             "values": {
                 "Current": fan_current,
                 "Voltage": fan_voltage,
-                "Temp": fan_temp,
+                "temperature": fan_temp,
                 "Vibration": fan_vibration
             }
         },

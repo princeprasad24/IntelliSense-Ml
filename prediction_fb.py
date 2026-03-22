@@ -29,7 +29,7 @@ device_history = {
 
 #FEATRURES OF DEVICES FOR PREDICITON
 devices_data_rfc = {
-    "fan": ["Current", "Voltage", "Temp", "Vibration"],
+    "fan": ["Current", "Voltage", "temperature", "Vibration"],
     "Bulb": ["Temp"],
     "Pump": ["Flow"]
 }
@@ -78,13 +78,18 @@ def rfc_prediction(device,data):
         return data
 
     processed_data = process_data(values=data,features=column)
- 
+    
+    column_data = []
+    for x in column:
+        column_data.append(str.lower(x))
+
 
     #make it into a dataframe
-    features = df([processed_data],columns=[column])
+    test_data = df([processed_data],columns=column_data)
     
+    # print(f"The Processed Data is : {processed_data} and \n the data frame is : {test_data}")
     # Make prediction
-    prediction = model.predict(features)[0]
+    prediction = model.predict(test_data)[0]
 
     print(f"THE prediciton for this  is {prediction}")
 
@@ -186,7 +191,8 @@ def ts_prediction(device,data):
 def printing(x):   
 
     try:
-        print("GOT INTO PRINTING")
+
+        # print("GOT INTO PRINTING")
         device_type = x.data.get("device")
         values = x.data.get("values")
 
