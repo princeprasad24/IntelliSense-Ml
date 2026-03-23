@@ -29,7 +29,7 @@ device_history = {
 
 #FEATRURES OF DEVICES FOR PREDICITON
 devices_data_rfc = {
-    "fan": ["Current", "Voltage", "temperature", "Vibration"],
+    "fan": ["Voltage" , "Vibration"],
     "Bulb": ["Temp"],
     "Pump": ["Flow"]
 }
@@ -79,6 +79,8 @@ def rfc_prediction(device,data):
 
     processed_data = process_data(values=data,features=column)
     
+    print(f"this is the processed data: {processed_data}") 
+   
     column_data = []
     for x in column:
         column_data.append(str.lower(x))
@@ -102,7 +104,7 @@ def rfc_prediction(device,data):
             "prediction" : float(prediciton)
         }
 
-        print(type(data))
+        print(f"Data of anamoly : {data}")
         print(f"Anamoly Detected in {device}")
         
         alerts_ref.child(device).push(data)

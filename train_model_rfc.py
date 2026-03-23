@@ -8,7 +8,7 @@ from joblib import dump
 df = pd.read_csv("./datasets/rfc_fan_dataset.csv")
 
 #FAN
-X = df[["current","voltage","temperature","vibration"]]
+X = df[["voltage","vibration"]]
 y = df["label"]
 
 X_train,X_test,y_train,y_test = train_test_split(
