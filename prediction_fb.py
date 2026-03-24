@@ -19,6 +19,10 @@ alerts_ref = db.reference('alerts')
 health_ref = db.reference('remaining_life')
 
 
+# global alert_count 
+alert_count = 0 
+prev_timestamp = 0.0
+
 
 #Histroty data for time series
 device_history = {
@@ -96,12 +100,13 @@ def rfc_prediction(device,data):
     print(f"THE prediciton for this  is {prediction}")
 
     
-    def send_alert(device,values,prediciton,timestamp):
+    def send_alert(device,values,prediciton,alert_type,timestamp):
         data = {
             "timestamp" : timestamp,
             "device" : str(device),
             "Values" : values,
-            "prediction" : float(prediciton)
+            "prediction" : float(prediciton),
+            "alert_type" : alert_type
         }
 
         print(f"Data of anamoly : {data}")
@@ -111,9 +116,20 @@ def rfc_prediction(device,data):
 
 
     if prediction == int(2):
+        global alert_count
+        alert_count = alert_count + 1
         timestamp = datetime.now().strftime("%H:%M:%S")
+        prev_timestamp = datetime.strptime(timestamp , "%H:%M:%S")
+        alert_type = "low"
         data_dict = dict(zip(column,processed_data))
-        send_alert(device,data_dict,prediction,timestamp)
+        if alert_count > 10:
+            if (prev_timestamp-datetime.strptime(timestamp , "%H:M:%S")).total_seconds() < 100:
+                alert_type = "high"
+
+        send_alert(device,data_dict,prediction,alert_type,timestamp)
+                
+
+
 
     
 
