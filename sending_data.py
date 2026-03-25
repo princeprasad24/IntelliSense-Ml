@@ -4,12 +4,12 @@ import random
 import time
 from datetime import datetime
 
-cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #GANESH DB
-# cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD DB
+# cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #GANESH DB
+cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD DB
 
 firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"  #GANESH DB
-    # "databaseURL" : "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app//" #PRASAD DB
+    # "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"  #GANESH DB
+    "databaseURL" : "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app//" #PRASAD DB
 })
 
 # Reference to appliances node
@@ -42,7 +42,7 @@ def generate_appliance_data():
     global motor_health, fan_health, bulb_health
 
     def get_state_values(device):
-        state = random.choice(["off", "normal", "fault"])
+        state = random.choice(["fault"])
 
         if state == "off":
             current = round(random.uniform(-14, -13), 2)
@@ -151,7 +151,7 @@ while True:
     #Send Values
     # s_ref.child("motor").push(s_data[0])
     s_ref.child("fan").push(s_data[1])
-    # s_ref.child("bulb").push(s_data[2])
+    s_ref.child("bulb").push(s_data[2])
 
     
 

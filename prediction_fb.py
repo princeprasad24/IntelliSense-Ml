@@ -4,12 +4,12 @@ from datetime import datetime
 from firebase_admin import credentials,db,initialize_app
 
 #Firebase Login and initailisation
-cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #Ganesh key
-# cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD Key
+# cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #Ganesh key
+cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD Key
 
 initialize_app(cred,{
-    # 'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
-    'databaseURL' : 'https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/' #Ganesh URL
+    'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
+    # 'databaseURL' : 'https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/' #Ganesh URL
 })
 
 #Reference to my firebase database
@@ -100,11 +100,12 @@ def rfc_prediction(device,data):
     print(f"THE prediciton for this  is {prediction}")
 
     
-    def send_alert(device,values,prediciton,alert_type,timestamp):
+    def send_alert(device,voltage,vibration,prediciton,alert_type,timestamp):
         data = {
             "timestamp" : timestamp,
             "device" : str(device),
-            "Values" : values,
+            "Voltage" : voltage,
+            "Vibration" : vibration,
             "prediction" : float(prediciton),
             "alert_type" : alert_type
         }
@@ -121,12 +122,12 @@ def rfc_prediction(device,data):
         timestamp = datetime.now().strftime("%H:%M:%S")
         prev_timestamp = datetime.strptime(timestamp , "%H:%M:%S")
         alert_type = "low"
-        data_dict = dict(zip(column,processed_data))
-        if alert_count > 10:
-            if (prev_timestamp-datetime.strptime(timestamp , "%H:M:%S")).total_seconds() < 100:
+        # data_dict = dict(zip(column,processed_data))
+        if alert_count > 2:
+            if (prev_timestamp-datetime.strptime(timestamp , "%H:%M:%S")).total_seconds() < 100:
                 alert_type = "high"
 
-        send_alert(device,data_dict,prediction,alert_type,timestamp)
+        send_alert(device,processed_data[0],processed_data[1],prediction,alert_type,timestamp)
                 
 
 
@@ -198,11 +199,11 @@ def ts_prediction(device,data):
         health_ref.child(device).push(data)
 
     send_health(anamoly=anomaly,health=health,device=device)
-    print(f"Predicted {data_type}: {prediction}")
+    # print(f"Predicted {data_type}: {prediction}")
     print(f"Actual {data_type}: {sensor_data}")
     print(f"Health of device: {health}")
     print(f"Anamoly deteceted: {anomaly}")
-    print(f"Deviation: {deviation}")
+    # print(f"Deviation: {deviation}")
     
     
 
@@ -224,9 +225,9 @@ def printing(x):
 
 
 
-sensor_data_ref.child("motor").listen(printing)
+sensor_data_ref.child("Water pump").listen(printing)
 sensor_data_ref.child("fan").listen(printing)
-sensor_data_ref.child("bulb").listen(printing)
+# sensor_data_ref.child("bulb").listen(printing)
 
 
 
