@@ -4,12 +4,12 @@ import random
 import time
 from datetime import datetime
 
-# cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #GANESH DB
-cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD DB
+cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #GANESH DB
+# cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD DB
 
 firebase_admin.initialize_app(cred, {
-    # "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"  #GANESH DB
-    "databaseURL" : "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app//" #PRASAD DB
+    "databaseURL": "https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/"  #GANESH DB
+    # "databaseURL" : "https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app//" #PRASAD DB
 })
 
 # Reference to appliances node
@@ -42,9 +42,12 @@ def generate_appliance_data():
     global motor_health, fan_health, bulb_health
 
     def get_state_values(device):
-        state = random.choice(["fault"])
+        state = random.choice(["off","normal","fault"])
 
         if state == "off":
+
+            
+            flow = 0
             current = round(random.uniform(-14, -13), 2)
             voltage = 0
             temp = round(random.uniform(30, 35), 2)
@@ -52,36 +55,46 @@ def generate_appliance_data():
             label = 0
 
         elif state == "normal":
+            flow = round(random.uniform(60,300),2)  
             current = round(random.uniform(-13.8, -13.2), 2)
-            voltage = round(random.uniform(7, 12), 2)
+            if device=="fan": voltage = round(random.uniform(5, 8), 2)
+            elif device=="pump": voltage = round(random.uniform(5,8),2)
+            else: voltage = round(random.uniform(7, 12), 2)
             temp = round(random.uniform(30, 40), 2)
             vibration = 0
             label = 1
 
         else:  # fault
+
+            
+            flow = round(random.uniform(0,50),2)
             current = round(random.uniform(-13.3, -12.5), 2)
-            voltage = round(random.uniform(13, 18), 2)
+            if device=="fan": voltage = round(random.uniform(8, 12), 2)
+            elif device=="pump": voltage = round(random.uniform(8,12),2)
+            else : voltage = round(random.uniform(13,18),2)
             temp = round(random.uniform(30, 50), 2)
             vibration = random.choice([0, 1])
             label = 2
 
-        # Force off‑like if health < 20
-        health = {
-            "motor": motor_health,
-            "fan": fan_health,
-            "bulb": bulb_health
-        }[device]
+        # # Force off‑like if health < 20
+        # health = {
+        #     "motor": motor_health,
+        #     "fan": fan_health,
+        #     "bulb": bulb_health
+        # }[device]
 
-        if health < 20:
-            current = 0.0
-            voltage = 0
-            vibration = 0
-            temp = round(random.uniform(30, 35), 2)
-
-        return current, voltage, temp, vibration
-
+        # if health < 20:
+        #     current = 0.0
+        #     voltage = 0
+        #     vibration = 0
+        #     temp = round(random.uniform(30, 35), 2)
+        
+        if device=="fan" : return current, voltage, temp, vibration  
+        elif device=="pump" : return flow,voltage
+        else : return current,voltage,temp,vibration
     # Generate values for each device using the above ranges
-    motor_current, motor_voltage, motor_temp, motor_vibration = get_state_values("motor")
+
+    pump_flow , pump_voltage = get_state_values("pump")
     fan_current,   fan_voltage,   fan_temp,   fan_vibration   = get_state_values("fan")
     bulb_current,  bulb_voltage,  bulb_temp,  _               = get_state_values("bulb")
 
@@ -104,12 +117,10 @@ def generate_appliance_data():
         # Motor values
         {
             "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
-            "device": "motor",
+            "device": "pump",
             "values": {
-                "Current": motor_current,
-                "Voltage": motor_voltage,
-                "Temp": motor_temp,
-                "Vibration": motor_vibration
+                "Flow" : pump_flow,
+                "Voltage": pump_voltage,
             }
         },
         # Fan values
@@ -149,13 +160,15 @@ while True:
     # s.set((appliance_data))
 
     #Send Values
-    # s_ref.child("motor").push(s_data[0])
+    s_ref.child("pump").push(s_data[0])
+    time.sleep(2)
     s_ref.child("fan").push(s_data[1])
-    s_ref.child("bulb").push(s_data[2])
+    # s_ref.child("bulb").push(s_data[2])
 
     
 
 
     print("Sensor Data Updated:", s_data[1])
+    print("Sensor Data Updated:", s_data[0])
 
     time.sleep(5)

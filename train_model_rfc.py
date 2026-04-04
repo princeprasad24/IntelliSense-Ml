@@ -7,12 +7,14 @@ from joblib import dump
 
 # df = pd.read_csv("./datasets/rfc_fan_dataset.csv")
 
-df = pd.read_csv("./datasets/ts_pump_dataset.csv")
+df = pd.read_csv("./datasets/rfc_pump_dataset.csv")
 
 #FAN
 # X = df[["voltage","vibration"]]
 # y = df["label"]
 
+
+#Pump
 X = df[["flow","voltage"]]
 y = df['label']
 
