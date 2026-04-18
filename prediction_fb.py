@@ -4,12 +4,12 @@ from datetime import datetime
 from firebase_admin import credentials,db,initialize_app
 from time import sleep
 #Firebase Login and initailisation
-cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #Ganesh key
-# cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD Key
+# cred = credentials.Certificate("ai-pre-main-firebase-Service_key.json") #Ganesh key
+cred = credentials.Certificate("serviceAccountKey.json")    #PRASAD Key
 
 initialize_app(cred,{
-    # 'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
-    'databaseURL' : 'https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/' #Ganesh URL
+    'databaseURL': 'https://final-year-project-abedc-default-rtdb.asia-southeast1.firebasedatabase.app/' #Prasad URL
+    # 'databaseURL' : 'https://ai-pre-main-default-rtdb.asia-southeast1.firebasedatabase.app/' #Ganesh URL
 })
 
 #Reference to my firebase database
@@ -44,15 +44,6 @@ devices_data_ts = {
     "pump" : "Flow"
 }
 
-
-def measure_current(c,v):
-    
-        if c <= 0 and v >= 10:
-             return 1
-        elif c <= 0 :
-            return 0
-        else: 
-            return 0
 
 
 def rfc_prediction(device,data):
