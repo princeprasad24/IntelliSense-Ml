@@ -5,7 +5,8 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from joblib import dump
 
-df = pd.read_csv("./datasets/ts_fan_dataset.csv")
+# df = pd.read_csv("./datasets/ts_fan_dataset.csv")
+df = pd.read_csv("./datasets/ts_bulb_dataset.csv")
 # df = pd.read_csv("./datasets/ts_pump_dataset.csv")
 
 window = 5
@@ -26,21 +27,33 @@ vib_col = "vibration"
 # vol_col = "voltage"
 
 
+# bulb
+
+temp_col = "temp"
+vol_col = "voltage"
+
 #FAN
 # df[f"{temp_col}_lag1"] = df[temp_col].shift(1)
 # df[f"{temp_col}_lag2"] = df[temp_col].shift(2)
 
-df[f"{vol_col}_lag1"] = df[vol_col].shift(1)
-df[f"{vol_col}_lag2"] = df[vol_col].shift(2)
+# df[f"{vol_col}_lag1"] = df[vol_col].shift(1)
+# df[f"{vol_col}_lag2"] = df[vol_col].shift(2)
 
 
 # #PUMP
 # df[f"{flow_col}_lag1"] = df[flow_col].shift(1)
 # df[f"{flow_col}_lag2"] = df[flow_col].shift(2)
 
+#Bulb
+df[f"{temp_col}_lag1"] = df[temp_col].shift(1)
+df[f"{temp_col}_lag2"] = df[temp_col].shift(2)
+
 
 # FAN
-features = [f"{vol_col}_lag1",f"{vol_col}_lag2"]
+# features = [f"{vol_col}_lag1",f"{vol_col}_lag2"]
+
+#Bulb
+features = [f"{temp_col}_lag1",f"{temp_col}_lag2"]
 
 # if vib_col:
 #     df[f"{vib_col}_lag1"] = df[vib_col].shift(1)
@@ -59,7 +72,8 @@ y = df_model[vol_col]
 model = LinearRegression()
 model.fit(X,y)
 
-dump(model,f"./models/ts_fan_model.pkl")
+# dump(model,f"./models/ts_fan_model.pkl")
+dump(model,f"./models/ts_bulb_model.pkl")
 # dump(model,f"./models/ts_pump_model.pkl")
 
 print("ts model saved")

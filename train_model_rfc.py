@@ -7,7 +7,8 @@ from joblib import dump
 
 # df = pd.read_csv("./datasets/rfc_fan_dataset.csv")
 
-df = pd.read_csv("./datasets/rfc_pump_dataset.csv")
+# df = pd.read_csv("./datasets/rfc_pump_dataset.csv")
+df = pd.read_csv("./datasets/rfc_bulb_dataset.csv")
 
 #FAN
 # X = df[["voltage","vibration"]]
@@ -15,7 +16,11 @@ df = pd.read_csv("./datasets/rfc_pump_dataset.csv")
 
 
 #Pump
-X = df[["flow","voltage"]]
+# X = df[["flow","voltage"]]
+# y = df['label']
+
+#bulb
+X = df[["temp","voltage"]]
 y = df['label']
 
 X_train,X_test,y_train,y_test = train_test_split(
@@ -33,6 +38,7 @@ accuracy = model.score(X_test,y_test)
 
 print("Model Accuracy:",accuracy)
 
-dump(model,"./models/rfc_pump_model.pkl")
+# dump(model,"./models/rfc_pump_model.pkl")
+dump(model,"./models/rfc_bulb_model.pkl")
 
 print("RFC Model Saved")

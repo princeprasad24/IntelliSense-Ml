@@ -34,7 +34,7 @@ for i in range(samples):
         flow = 0
         current = round(random.uniform(-14,-13),2)
         voltage = 0
-        temp = 32
+        temp = 0
         vibration = 0
         label = 0
         limit = True
@@ -49,8 +49,8 @@ for i in range(samples):
             prev_flow = flow
             limit = False
         current = round(random.uniform(-13.7,-13.3),2)
-        voltage = round(random.uniform(5,8),2)
-        temp = round(random.uniform(30,40),2)
+        voltage = round(random.uniform(2,3),2)
+        temp = round(random.uniform(25,26),2)
         vibration = 0
         label = 1
         flow = float(flow)
@@ -67,8 +67,8 @@ for i in range(samples):
             prev_flow = flow
             limit = False
         current = round(random.uniform(-13.3,-12.7),2)
-        voltage = round(random.uniform(8,12),2)
-        temp = round(random.uniform(35,55),2)
+        voltage = round(random.uniform(4,4),2)
+        temp = round(random.uniform(27,27),2)
         vibration = 1
         label = 2
         flow = float(flow)
@@ -84,7 +84,9 @@ for i in range(samples):
     #     label
     # ])
 
-    rows.append([time,flow,voltage,label])
+    # rows.append([time,flow,voltage,label])
+
+    rows.append([time,temp,voltage,label])
 
     time = time + timedelta(seconds=5)
 
@@ -102,11 +104,13 @@ for i in range(samples):
 #PUMP
 df = pd.DataFrame(rows,columns=[
     'timestamp',
-    'flow',
+    'temp',
     'voltage',
     'label'
 ])
 
 # df.to_csv("./datasets/ts_fan_dataset.csv",index=False)
-df.to_csv("./datasets/ts_pump_dataset.csv",index=False)
+# df.to_csv("./datasets/ts_pump_dataset.csv",index=False)
+df.to_csv("./datasets/ts_bulb_dataset.csv",index=False)
+
 print("Time Series Dataset Created")

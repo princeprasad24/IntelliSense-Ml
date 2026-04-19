@@ -171,7 +171,7 @@ def ts_prediction(device,data):
         base_value = {
             "fan" : 100,
             "pump" : 1000,
-            "bulb" : 200
+            "bulb" : 1000
         }
         devitation_multiplier = {
             "fan" : 1,
@@ -227,7 +227,7 @@ def printing(x):
 sensor_data_ref.child("pump").listen(printing)
 # sleep(2)
 sensor_data_ref.child("fan").listen(printing)
-# sensor_data_ref.child("bulb").listen(printing)
+sensor_data_ref.child("bulb").listen(printing)
 
 
 
